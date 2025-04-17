@@ -8,5 +8,6 @@ public class Tarea_8 {
         FRMventanaPrinical ventana1 = new FRMventanaPrinical();
         ventana1.setVisible(true);
         ventana1.setLocationRelativeTo(null);
+        //Ingresando un comentario de prueba
     }
 }
