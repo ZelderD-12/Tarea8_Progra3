@@ -1,5 +1,6 @@
 package tarea_8;
 
+import dbconnection.*;
 
 public class FRMventanaPrinical extends javax.swing.JFrame {
 Control controlador;
@@ -19,6 +20,12 @@ Control controlador;
         jScrollPane1 = new javax.swing.JScrollPane();
         txtFrase = new javax.swing.JTextArea();
         btnArmarArbol = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jtblMensaje = new javax.swing.JTable();
+        jbtnsave = new javax.swing.JButton();
+        jbtnconn = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jtadescifrado = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -44,7 +51,7 @@ Control controlador;
         txtFrase.setRows(5);
         jScrollPane1.setViewportView(txtFrase);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 30, 330, 70));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 330, 70));
 
         btnArmarArbol.setText("Enviar");
         btnArmarArbol.addActionListener(new java.awt.event.ActionListener() {
@@ -52,7 +59,39 @@ Control controlador;
                 btnArmarArbolActionPerformed(evt);
             }
         });
-        jPanel1.add(btnArmarArbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 110, 330, -1));
+        jPanel1.add(btnArmarArbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, 330, -1));
+
+        jtblMensaje.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Mensaje"
+            }
+        ));
+        jScrollPane2.setViewportView(jtblMensaje);
+
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 30, 430, 170));
+
+        jbtnsave.setText("Guardar en DB");
+        jPanel1.add(jbtnsave, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 220, 180, 60));
+
+        jbtnconn.setText("Conectar DB");
+        jbtnconn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnconnActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jbtnconn, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 220, 180, 60));
+
+        jtadescifrado.setColumns(20);
+        jtadescifrado.setRows(5);
+        jScrollPane3.setViewportView(jtadescifrado);
+
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 310, 430, 150));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -73,6 +112,11 @@ Control controlador;
          controlador.insertar(letra);       
 
     }//GEN-LAST:event_btnArmarArbolActionPerformed
+
+    private void jbtnconnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnconnActionPerformed
+        // TODO add your handling code here:
+        dbconn.cargarDatosEnTabla(jtblMensaje, this);
+    }//GEN-LAST:event_jbtnconnActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -110,6 +154,12 @@ Control controlador;
     private javax.swing.JButton btnArmarArbol;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton jbtnconn;
+    private javax.swing.JButton jbtnsave;
+    private javax.swing.JTextArea jtadescifrado;
+    private javax.swing.JTable jtblMensaje;
     private javax.swing.JPanel paneldelArbol;
     private javax.swing.JScrollPane scrolArbol;
     private javax.swing.JTextArea txtFrase;
