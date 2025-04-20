@@ -1,9 +1,12 @@
 package tarea_8;
 
 import dbconnection.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class FRMventanaPrinical extends javax.swing.JFrame {
-Control controlador;
+
+    Control controlador;
 
     public FRMventanaPrinical() {
         initComponents();
@@ -77,6 +80,11 @@ Control controlador;
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 30, 430, 170));
 
         jbtnsave.setText("Guardar en DB");
+        jbtnsave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnsaveActionPerformed(evt);
+            }
+        });
         jPanel1.add(jbtnsave, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 220, 180, 60));
 
         jbtnconn.setText("Conectar DB");
@@ -108,8 +116,8 @@ Control controlador;
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnArmarArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArmarArbolActionPerformed
-        String letra = txtFrase.getText(); 
-         controlador.insertar(letra);       
+        String letra = txtFrase.getText();
+        controlador.insertar(letra);
 
     }//GEN-LAST:event_btnArmarArbolActionPerformed
 
@@ -117,6 +125,21 @@ Control controlador;
         // TODO add your handling code here:
         dbconn.cargarDatosEnTabla(jtblMensaje, this);
     }//GEN-LAST:event_jbtnconnActionPerformed
+
+    private void jbtnsaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnsaveActionPerformed
+        // TODO add your handling code here:
+        int filaSeleccionada = jtblMensaje.getSelectedRow();
+
+        if (filaSeleccionada != -1) {
+            String valorCol2 = jtblMensaje.getValueAt(filaSeleccionada, 0).toString(); // solo hay una columna visible
+            String nuevoTexto = jtadescifrado.getText();
+
+            dbconn.actualizarColumna3PorColumna2(valorCol2, nuevoTexto, this);
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila primero.");
+        }
+
+    }//GEN-LAST:event_jbtnsaveActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

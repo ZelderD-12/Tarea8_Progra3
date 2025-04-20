@@ -8,8 +8,10 @@ package dbconnection;
 import java.awt.Component;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,38 +22,39 @@ import javax.swing.table.DefaultTableModel;
  */
 public class dbconn {
 
+    public static String host, port, dbName, user, password, tabla;
+
     public static void cargarDatosEnTabla(JTable jtblDatos, Component parent) {
         // Pedir los datos para la conexión
-        String host = JOptionPane.showInputDialog(parent, "Ingrese el host (ej: localhost):");
+        host = JOptionPane.showInputDialog(parent, "Ingrese el host (ej: localhost):");
         if (host == null) {
             return;
         }
 
-        String port = JOptionPane.showInputDialog(parent, "Ingrese el puerto (ej: 3306):");
+        port = JOptionPane.showInputDialog(parent, "Ingrese el puerto (ej: 3306):");
         if (port == null) {
             return;
         }
 
-        String dbName = JOptionPane.showInputDialog(parent, "Ingrese el nombre de la base de datos:");
+        dbName = JOptionPane.showInputDialog(parent, "Ingrese el nombre de la base de datos:");
         if (dbName == null) {
             return;
         }
 
-        String user = JOptionPane.showInputDialog(parent, "Ingrese el usuario:");
+        user = JOptionPane.showInputDialog(parent, "Ingrese el usuario:");
         if (user == null) {
             return;
         }
 
-        String password = JOptionPane.showInputDialog(parent, "Ingrese la contraseña:");
+        password = JOptionPane.showInputDialog(parent, "Ingrese la contraseña:");
         if (password == null) {
             return;
         }
 
-        String tabla = JOptionPane.showInputDialog(parent, "Ingrese el nombre de la tabla:");
+        tabla = JOptionPane.showInputDialog(parent, "Ingrese el nombre de la tabla:");
         if (tabla == null) {
             return;
         }
-
         try {
             // Cargar driver
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -68,18 +71,19 @@ public class dbconn {
             ResultSetMetaData meta = rs.getMetaData();
             int columnas = meta.getColumnCount();
 
-            // Crear modelo de tabla sin la primera columna
-            DefaultTableModel model = new DefaultTableModel();
-            for (int i = 2; i <= columnas; i++) {
-                model.addColumn(meta.getColumnName(i));
+            if (columnas < 2) {
+                JOptionPane.showMessageDialog(parent, "La tabla no tiene una segunda columna.");
+                return;
             }
 
-            // Llenar datos sin la primera columna
+            // Crear modelo solo con la segunda columna
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn(meta.getColumnName(2));  // Solo la columna 2
+
+            // Agregar los datos de la segunda columna
             while (rs.next()) {
-                Object[] fila = new Object[columnas - 1];
-                for (int i = 2; i <= columnas; i++) {
-                    fila[i - 2] = rs.getObject(i);
-                }
+                Object[] fila = new Object[1];
+                fila[0] = rs.getObject(2);  // Solo la columna 2
                 model.addRow(fila);
             }
 
@@ -94,4 +98,53 @@ public class dbconn {
             JOptionPane.showMessageDialog(parent, "Error al conectar o consultar la base de datos:\n" + e.getMessage());
         }
     }
+
+    public static String obtenerNombreColumna(int indice) throws Exception {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useSSL=true&requireSSL=true&serverTimezone=UTC";
+        Connection conn = DriverManager.getConnection(url, user, password);
+
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM " + tabla + " LIMIT 1");
+        ResultSetMetaData meta = rs.getMetaData();
+        String nombreColumna = meta.getColumnName(indice);
+
+        rs.close();
+        stmt.close();
+        conn.close();
+
+        return nombreColumna;
+    }
+
+    public static void actualizarColumna3PorColumna2(String valorColumna2, String nuevoValorColumna3, Component parent) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useSSL=true&requireSSL=true&serverTimezone=UTC";
+            Connection conn = DriverManager.getConnection(url, user, password);
+
+            // Obtener nombres de columnas antes de armar la consulta
+            String nombreCol3 = obtenerNombreColumna(3);
+            String nombreCol2 = obtenerNombreColumna(2);
+
+            String sql = "UPDATE " + tabla + " SET " + nombreCol3 + " = ? WHERE " + nombreCol2 + " = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, nuevoValorColumna3);
+            ps.setString(2, valorColumna2);
+
+            int filasAfectadas = ps.executeUpdate();
+
+            if (filasAfectadas > 0) {
+                JOptionPane.showMessageDialog(parent, "Dato actualizado correctamente.");
+            } else {
+                JOptionPane.showMessageDialog(parent, "No se encontró la fila para actualizar.");
+            }
+
+            ps.close();
+            conn.close();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(parent, "Error al actualizar los datos:\n" + e.getMessage());
+        }
+    }
+
 }
