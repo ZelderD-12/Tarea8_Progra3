@@ -77,7 +77,7 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(jtblMensaje);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 30, 430, 170));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 30, 430, 110));
 
         jbtnsave.setText("Guardar en DB");
         jbtnsave.addActionListener(new java.awt.event.ActionListener() {
@@ -85,7 +85,7 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
                 jbtnsaveActionPerformed(evt);
             }
         });
-        jPanel1.add(jbtnsave, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 220, 180, 60));
+        jPanel1.add(jbtnsave, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 160, 150, 40));
 
         jbtnconn.setText("Conectar DB");
         jbtnconn.addActionListener(new java.awt.event.ActionListener() {
@@ -93,7 +93,7 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
                 jbtnconnActionPerformed(evt);
             }
         });
-        jPanel1.add(jbtnconn, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 220, 180, 60));
+        jPanel1.add(jbtnconn, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 160, 160, 40));
 
         jtadescifrado.setColumns(20);
         jtadescifrado.setRows(5);
