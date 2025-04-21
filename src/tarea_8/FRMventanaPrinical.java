@@ -207,7 +207,7 @@ cronometro crono0metro;
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
-        jPanel1.add(txtcontador, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 500, 110, 40));
+        jPanel1.add(txtcontador, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 370, 110, 40));
 
         btnmensaje.setText("Mostrar Mensaje");
         btnmensaje.addActionListener(new java.awt.event.ActionListener() {
@@ -224,7 +224,7 @@ cronometro crono0metro;
         jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 440, 190, 100));
 
         label1.setText("jLabel1");
-        jPanel1.add(label1, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 480, 130, 40));
+        jPanel1.add(label1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1020, 500, 130, 40));
 
         txttiempo.setText("jLabel1");
         txttiempo.addAncestorListener(new javax.swing.event.AncestorListener() {
@@ -236,7 +236,7 @@ cronometro crono0metro;
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
-        jPanel1.add(txttiempo, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 540, 110, 30));
+        jPanel1.add(txttiempo, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 500, 110, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -246,7 +246,7 @@ cronometro crono0metro;
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 563, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
         );
 
         pack();
@@ -442,10 +442,6 @@ private boolean validarEnTxt(String id) {
             valorseleccionado = valor.toString();
         }
     }//GEN-LAST:event_jtblMensajeMouseClicked
-
-    private void txtcontadorAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_txtcontadorAncestorAdded
-     
-    }//GEN-LAST:event_txtcontadorAncestorAdded
 
     private void btnmensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnmensajeActionPerformed
     // Inicializar componentes y variables
@@ -1316,6 +1312,10 @@ class PanelArbol {
        
 
     }//GEN-LAST:event_txttiempoAncestorAdded
+
+    private void txtcontadorAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_txtcontadorAncestorAdded
+
+    }//GEN-LAST:event_txtcontadorAncestorAdded
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
