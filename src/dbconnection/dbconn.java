@@ -117,7 +117,7 @@ public class dbconn {
 
         return nombreColumna;
     }
-
+    
     public static void actualizarColumna3PorColumna2(String valorColumna2, String nuevoValorColumna3, Component parent) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
