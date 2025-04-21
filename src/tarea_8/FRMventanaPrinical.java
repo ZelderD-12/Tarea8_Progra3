@@ -833,7 +833,7 @@ private List<String> filtrarYOrdenarPalabras(Set<String> combinaciones) {
         "lograr", "lomo", "lona", "lote", "lucha", "luego", "lugar", "lujo", "luna", 
         "lunes", "luz", "maceta", "madera", "madre", "maestro", "mafia", "magia", 
         "mago", "maiz", "maleta", "mama", "manda", "mango", "mano", "manso", "manta", 
-        "manzana", "mapa", "maquina", "mar", "marco", "marea", "marido", "marrón", 
+        "manzana", "mapa", "maquina","hola", "mar", "marco", "marea", "marido", "marrón", 
         "martes", "marzo", "masa", "matar", "materia", "matriz", "mayo", "mayor", 
         "mecanico", "medalla", "medio", "mejor", "melón", "memoria", "menor", "mensaje", 
         "mente", "menu", "mercado", "mercurio", "mes", "mesa", "metal", "metro", 
