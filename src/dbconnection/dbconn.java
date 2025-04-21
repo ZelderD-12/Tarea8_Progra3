@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
  * @author WillGP
  */
 public class dbconn {
+    private ArrayList <Integer> ids = new ArrayList <>(); 
 
     public static String host, port, dbName, user, password, tabla;
 
@@ -147,4 +149,45 @@ public class dbconn {
         }
     }
 
+  
+    
+        public void mostrarMensajes() {
+      try {
+        // Limpiar la lista de IDs antes de cargar nuevos
+        ids.clear();
+           
+        
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useSSL=true&requireSSL=true&serverTimezone=UTC";
+        Connection conn = DriverManager.getConnection(url, user, password);
+        
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT idmensaje FROM " + tabla);
+        
+        while (rs.next()) {
+            int id = rs.getInt("idmensaje");
+            ids.add(id);
+            System.out.println("ID encontrado: " + id);
+        }
+        
+        System.out.println("Total de IDs recuperados: " + ids.size());
+        
+        
+        rs.close();
+        stmt.close();
+        conn.close();
+        
+    } catch (Exception ex) {
+        System.out.println("Error al obtener mensajes: " + ex.getMessage());
+        ex.printStackTrace();
+    }
+}
+    
+     public ArrayList<Integer> getListaIds() {
+       return ids;
+   }  
+    
+    
+    
+    
 }
