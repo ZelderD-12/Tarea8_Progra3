@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -19,6 +21,8 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
     public String Nombre;
     public String ID; 
     private TXT gestorTXT = new TXT(); 
+    Encriptacion ecript = new Encriptacion();
+    public String valorseleccionado;
     
    private String idSeleccionado;
     Control controlador;
@@ -61,6 +65,7 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jtadescifrado = new javax.swing.JTextArea();
         Registrar = new javax.swing.JButton();
+        btnencriptar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,6 +112,11 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
                 "Mensaje"
             }
         ));
+        jtblMensaje.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtblMensajeMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jtblMensaje);
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 30, 430, 170));
@@ -131,7 +141,7 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
         jtadescifrado.setRows(5);
         jScrollPane3.setViewportView(jtadescifrado);
 
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 310, 430, 150));
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 340, 430, 150));
 
         Registrar.setText("Registrar");
         Registrar.addActionListener(new java.awt.event.ActionListener() {
@@ -140,6 +150,14 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
             }
         });
         jPanel1.add(Registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 370, 120, 30));
+
+        btnencriptar.setText("Encriptar");
+        btnencriptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnencriptarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnencriptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 300, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -262,7 +280,7 @@ private boolean validarEnTxt(String id) {
     private void btnArmarArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArmarArbolActionPerformed
         String letra = txtFrase.getText();
         controlador.insertar(letra);
-
+        
     }//GEN-LAST:event_btnArmarArbolActionPerformed
 
     private void jbtnconnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnconnActionPerformed
@@ -321,6 +339,24 @@ private boolean validarEnTxt(String id) {
         }
     }//GEN-LAST:event_RegistrarActionPerformed
 
+    private void btnencriptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnencriptarActionPerformed
+        try {
+            jtadescifrado.setText(ecript.IniciarEncriptacion(valorseleccionado));
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FRMventanaPrinical.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnencriptarActionPerformed
+
+    private void jtblMensajeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtblMensajeMouseClicked
+        int fila = jtblMensaje.getSelectedRow();      // Fila seleccionada
+        int columna = jtblMensaje.getSelectedColumn(); // Columna seleccionada
+
+        if (fila != -1 && columna != -1) {
+            Object valor = jtblMensaje.getValueAt(fila, columna); // Obtener el valor
+            valorseleccionado = valor.toString();
+        }
+    }//GEN-LAST:event_jtblMensajeMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -356,6 +392,7 @@ private boolean validarEnTxt(String id) {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Registrar;
     private javax.swing.JButton btnArmarArbol;
+    private javax.swing.JButton btnencriptar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
