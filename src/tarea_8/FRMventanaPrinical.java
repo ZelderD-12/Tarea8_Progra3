@@ -1,7 +1,10 @@
 package tarea_8;
 
 import dbconnection.*;
+import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.BufferedReader;
@@ -9,12 +12,27 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class FRMventanaPrinical extends javax.swing.JFrame {
     private JComboBox<String> comboNombres;
@@ -66,6 +84,11 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
         jtadescifrado = new javax.swing.JTextArea();
         Registrar = new javax.swing.JButton();
         btnencriptar = new javax.swing.JButton();
+        txtcontador = new javax.swing.JLabel();
+        btnmensaje = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtO = new javax.swing.JTextArea();
+        label1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -159,15 +182,46 @@ public class FRMventanaPrinical extends javax.swing.JFrame {
         });
         jPanel1.add(btnencriptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 300, -1, -1));
 
+        txtcontador.setBackground(new java.awt.Color(255, 255, 0));
+        txtcontador.setFont(new java.awt.Font("Tw Cen MT", 2, 5)); // NOI18N
+        txtcontador.setForeground(new java.awt.Color(255, 255, 0));
+        txtcontador.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                txtcontadorAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        jPanel1.add(txtcontador, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 500, 110, 40));
+
+        btnmensaje.setText("Mostrar Mensaje");
+        btnmensaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnmensajeActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnmensaje, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 390, 130, 50));
+
+        txtO.setColumns(20);
+        txtO.setRows(5);
+        jScrollPane4.setViewportView(txtO);
+
+        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 440, 190, 100));
+
+        label1.setText("jLabel1");
+        jPanel1.add(label1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 480, 70, 40));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1242, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1314, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
         );
 
         pack();
@@ -357,6 +411,371 @@ private boolean validarEnTxt(String id) {
         }
     }//GEN-LAST:event_jtblMensajeMouseClicked
 
+    private void txtcontadorAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_txtcontadorAncestorAdded
+     
+    }//GEN-LAST:event_txtcontadorAncestorAdded
+
+    private void btnmensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnmensajeActionPerformed
+   
+    // Inicializar componentes y variables
+    final JTextArea jtadescifrado = this.jtadescifrado; // Asumiendo que tienes un JTextArea llamado jtadescifrado
+    final JLabel label1 = this.label1; // Asumiendo que tienes un JLabel llamado label1
+    final AtomicInteger contador = new AtomicInteger(0);
+    final AtomicBoolean operacionCompletada = new AtomicBoolean(false);
+    
+    // Limpiar contenido anterior
+    jtadescifrado.setText("");
+    label1.setText("Procesando...");
+    
+    // Crear un hilo para el proceso de decodificación
+    Thread hiloDecodificacion = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                // Obtener datos del panel del árbol
+                ArbolBinario paneldelArbol = obtenerArbolDePanelActual(); // Método que debes implementar
+                
+                if (paneldelArbol == null) {
+                    SwingUtilities.invokeLater(() -> {
+                        jtadescifrado.setText("Error: No se pudo obtener el árbol de decodificación");
+                        label1.setText("Error");
+                    });
+                    return;
+                }
+                
+                // Consultar la base de datos para obtener el mensaje cifrado
+                String mensajeCifrado = consultarMensajeDeBD(); // Método que debes implementar
+                
+                if (mensajeCifrado == null || mensajeCifrado.isEmpty()) {
+                    SwingUtilities.invokeLater(() -> {
+                        jtadescifrado.setText("No hay mensajes para decodificar");
+                        label1.setText("Completado: 0 mensajes");
+                    });
+                    return;
+                }
+                
+                // Iniciar proceso de decodificación
+                final StringBuilder mensajeDecodificado = new StringBuilder();
+                final String[] palabras = mensajeCifrado.split("\\s+");
+                
+                for (String palabra : palabras) {
+                    // Decodificar cada palabra usando el árbol
+                    String palabraDecodificada = decodificarPalabra(palabra, paneldelArbol);
+                    mensajeDecodificado.append(palabraDecodificada).append(" ");
+                    
+                    // Actualizar contador
+                    contador.incrementAndGet();
+                    
+                    final int contadorActual = contador.get();
+                    SwingUtilities.invokeLater(() -> {
+                        label1.setText("Palabras procesadas: " + contadorActual);
+                    });
+                    
+                    // Pequeña pausa para ver el progreso
+                    Thread.sleep(50);
+                }
+                
+                // Mostrar resultado final
+                final String resultadoFinal = mensajeDecodificado.toString().trim();
+                operacionCompletada.set(true);
+                
+                SwingUtilities.invokeLater(() -> {
+                    jtadescifrado.setText(resultadoFinal);
+                    label1.setText("Completado: " + contador.get() + " palabras decodificadas");
+                });
+                
+            } catch (Exception e) {
+                operacionCompletada.set(true);
+                final String mensajeError = "Error en la decodificación: " + e.getMessage();
+                
+                SwingUtilities.invokeLater(() -> {
+                    jtadescifrado.setText(mensajeError);
+                    label1.setText("Error");
+                });
+                
+                e.printStackTrace();
+            }
+        }
+    });
+    
+    // Iniciar el hilo de decodificación
+    hiloDecodificacion.start();
+    
+    // Establecer un temporizador para cancelar la operación si tarda más de 3 minutos
+    Timer temporizador = new Timer(180000, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!operacionCompletada.get()) {
+                hiloDecodificacion.interrupt();
+                
+                SwingUtilities.invokeLater(() -> {
+                    jtadescifrado.setText("La operación fue cancelada debido a que excedió el tiempo límite (3 minutos)");
+                    label1.setText("Cancelado por tiempo");
+                });
+            }
+        }
+    });
+    
+    temporizador.setRepeats(false);
+    temporizador.start();
+}
+
+/**
+ * Método para obtener un mensaje cifrado de la base de datos
+ * @return El mensaje cifrado o null si no se encuentra
+ */
+private String consultarMensajeDeBD() {
+    String mensajeCifrado = null;
+    Connection conn = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    
+    try {
+        // Configurar la conexión a la base de datos
+        conn = obtenerConexionBD(); // Método que debes implementar
+        
+        // Consulta SQL para obtener el mensaje
+        String sql = "SELECT mensaje_cifrado FROM mensajes WHERE estado = 'pendiente' ORDER BY fecha_creacion ASC LIMIT 1";
+        stmt = conn.prepareStatement(sql);
+        
+        // Ejecutar la consulta
+        rs = stmt.executeQuery();
+        
+        if (rs.next()) {
+            mensajeCifrado = rs.getString("mensaje_cifrado");
+            
+            // Actualizar el estado del mensaje para que no se procese de nuevo
+            PreparedStatement updateStmt = conn.prepareStatement(
+                "UPDATE mensajes SET estado = 'procesado' WHERE mensaje_cifrado = ?");
+            updateStmt.setString(1, mensajeCifrado);
+            updateStmt.executeUpdate();
+            updateStmt.close();
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al consultar la base de datos: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        // Cerrar recursos
+        try {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    return mensajeCifrado;
+}
+
+/**
+ * Método para decodificar una palabra usando un árbol binario
+ * @param palabraCifrada La palabra cifrada a decodificar
+ * @param arbol El árbol binario usado para decodificación
+ * @return La palabra decodificada
+ */
+private String decodificarPalabra(String palabraCifrada, ArbolBinario arbol) {
+    StringBuilder palabraDecodificada = new StringBuilder();
+    
+    // Implementación de la lógica de decodificación usando el árbol
+    // Este es un ejemplo simplificado; ajústalo según tu implementación específica del árbol
+    for (int i = 0; i < palabraCifrada.length(); i++) {
+        char c = palabraCifrada.charAt(i);
+        
+        // Ejemplo: Si el carácter es '0', ir al nodo izquierdo; si es '1', ir al nodo derecho
+        NodoArbol nodoActual = arbol.getRaiz();
+        
+        // Recorrido del árbol según el carácter
+        // (Esta es una implementación conceptual, ajústala a tu modelo de árbol)
+        if (c == '0') {
+            if (nodoActual.getIzquierdo() != null) {
+                nodoActual = nodoActual.getIzquierdo();
+            }
+        } else if (c == '1') {
+            if (nodoActual.getDerecho() != null) {
+                nodoActual = nodoActual.getDerecho();
+            }
+        }
+        
+        // Agregar el valor del nodo al resultado
+        if (nodoActual != null && nodoActual.getValor() != null) {
+            palabraDecodificada.append(nodoActual.getValor());
+        }
+    }
+    
+    return palabraDecodificada.toString();
+}
+
+/**
+ * Método para obtener el árbol binario desde el panel de la interfaz
+ * @return El árbol binario o null si no se puede obtener
+ */
+private ArbolBinario obtenerArbolDePanelActual() {
+    // Implementación dependiente de tu estructura de UI
+    // Asumiendo que tienes un panel que contiene la visualización del árbol
+    // y tiene un método para obtener la estructura de datos del árbol
+    
+    /**
+ * Método para obtener el árbol binario desde el panel de la interfaz
+ * @return El árbol binario o null si no se puede obtener
+ */
+    /*private ArbolBinario obtenerArbolDePanelActual() {*/
+    // Obtener la referencia al panel
+    JPanel panelArbol = this.paneldelArbol;
+    
+    if (panelArbol != null) {
+        // Opción 1: Si el árbol está almacenado como una propiedad del panel
+        Object arbolObj = panelArbol.getClientProperty("arbolBinario");
+        if (arbolObj instanceof ArbolBinario) {
+            return (ArbolBinario) arbolObj;
+        }
+        
+        // Opción 2: Si el árbol se puede recuperar de algún componente hijo
+        for (Component comp : panelArbol.getComponents()) {
+            if (comp instanceof JTree) {
+                // Si hay un JTree, podemos construir nuestro árbol binario a partir de él
+                return construirArbolBinarioDesdeJTree((JTree) comp);
+            }
+        }
+        
+        // Opción 3: Si el panel tiene una variable de instancia que representa el árbol
+        // Esto requiere usar reflexión, que es una técnica avanzada
+        try {
+            Field field = panelArbol.getClass().getDeclaredField("arbolBinario");
+            field.setAccessible(true);
+            Object valor = field.get(panelArbol);
+            if (valor instanceof ArbolBinario) {
+                return (ArbolBinario) valor;
+            }
+        } catch (Exception e) {
+            // Ignorar errores de reflexión, intentar otro método
+        }
+    }
+    
+    System.err.println("No se pudo obtener el árbol del panel. Creando uno por defecto.");
+    // Si no se puede obtener, crear uno nuevo como último recurso
+    return new ArbolBinario();
+}
+
+/**
+ * Construye un ArbolBinario a partir de un JTree
+ * @param jTree El JTree de la interfaz gráfica
+ * @return Un nuevo ArbolBinario
+ */
+private ArbolBinario construirArbolBinarioDesdeJTree(JTree jTree) {
+    ArbolBinario arbol = new ArbolBinario();
+    
+    // Obtener el nodo raíz del JTree
+    DefaultMutableTreeNode raizUI = (DefaultMutableTreeNode) jTree.getModel().getRoot();
+    
+    // Crear el nodo raíz para nuestro ArbolBinario
+    NodoArbol raiz = new NodoArbol();
+    raiz.setValor(raizUI.getUserObject().toString());
+    arbol.setRaiz(raiz);
+    
+    // Construir el resto del árbol recursivamente
+    construirNodosDelArbol(raiz, raizUI);
+    
+    return arbol;
+}
+
+/**
+ * Método auxiliar para construir los nodos del árbol binario
+ * @param nodoArbol El nodo actual en nuestro ArbolBinario
+ * @param nodoUI El nodo correspondiente en el JTree
+ */
+private void construirNodosDelArbol(NodoArbol nodoArbol, DefaultMutableTreeNode nodoUI) {
+    // Si hay al menos un hijo, considerarlo como hijo izquierdo
+    if (nodoUI.getChildCount() > 0) {
+        DefaultMutableTreeNode hijoIzqUI = (DefaultMutableTreeNode) nodoUI.getChildAt(0);
+        NodoArbol hijoIzq = new NodoArbol();
+        hijoIzq.setValor(hijoIzqUI.getUserObject().toString());
+        nodoArbol.setIzquierdo(hijoIzq);
+        construirNodosDelArbol(hijoIzq, hijoIzqUI);
+    }
+    
+    // Si hay al menos dos hijos, considerar el segundo como hijo derecho
+    if (nodoUI.getChildCount() > 1) {
+        DefaultMutableTreeNode hijoDerUI = (DefaultMutableTreeNode) nodoUI.getChildAt(1);
+        NodoArbol hijoDer = new NodoArbol();
+        hijoDer.setValor(hijoDerUI.getUserObject().toString());
+        nodoArbol.setDerecho(hijoDer);
+        construirNodosDelArbol(hijoDer, hijoDerUI);
+    }
+}
+
+/**
+ * Método para obtener una conexión a la base de datos
+ * @return Una conexión a la base de datos
+ * @throws SQLException si hay un error al conectar
+ */
+private Connection obtenerConexionBD() throws SQLException {
+    // Actualizado con las credenciales proporcionadas
+    String url = "jdbc:mysql://212.1.211.51:3306/u878723730_whatsapp_db";
+    String usuario = "u878723730_mysqladmin";
+    String password = "12345678.Umg";
+    
+    try {
+        // Asegurarse de que el driver esté cargado
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(url, usuario, password);
+    } catch (ClassNotFoundException e) {
+        System.err.println("Error al cargar el driver JDBC: " + e.getMessage());
+        throw new SQLException("No se pudo cargar el driver JDBC", e);
+    }
+}
+// Clases internas para el ejemplo (reemplazar con tus propias implementaciones)
+class ArbolBinario {
+    private NodoArbol raiz;
+    
+    public NodoArbol getRaiz() {
+        return raiz;
+    }
+    
+    public void setRaiz(NodoArbol raiz) {
+        this.raiz = raiz;
+    }
+}
+
+class NodoArbol {
+    private String valor;
+    private NodoArbol izquierdo;
+    private NodoArbol derecho;
+    
+    public String getValor() {
+        return valor;
+    }
+    
+    public NodoArbol getIzquierdo() {
+        return izquierdo;
+    }
+    
+    public NodoArbol getDerecho() {
+        return derecho;
+    }
+
+        private void setDerecho(NodoArbol hijoDer) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        private void setValor(String toString) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        private void setIzquierdo(NodoArbol hijoIzq) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+    }
+
+class PanelArbol {
+    private ArbolBinario arbolBinario;
+    
+    public ArbolBinario getArbolBinario() {
+        return arbolBinario;
+    }
+
+    }//GEN-LAST:event_btnmensajeActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -393,16 +812,21 @@ private boolean validarEnTxt(String id) {
     private javax.swing.JButton Registrar;
     private javax.swing.JButton btnArmarArbol;
     private javax.swing.JButton btnencriptar;
+    private javax.swing.JButton btnmensaje;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JButton jbtnconn;
     private javax.swing.JButton jbtnsave;
     private javax.swing.JTextArea jtadescifrado;
     private javax.swing.JTable jtblMensaje;
+    private javax.swing.JLabel label1;
     private javax.swing.JPanel paneldelArbol;
     private javax.swing.JScrollPane scrolArbol;
     private javax.swing.JTextArea txtFrase;
+    private javax.swing.JTextArea txtO;
+    private javax.swing.JLabel txtcontador;
     // End of variables declaration//GEN-END:variables
 }
